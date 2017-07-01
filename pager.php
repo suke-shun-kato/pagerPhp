@@ -1,16 +1,4 @@
 <?php
-$currentPage = 1;
-$numAllPage = 5;
-$numPageNoInPager = 7;
-$aaa = makePagerFull(
-    $currentPage,
-    $numAllPage,
-    $numPageNoInPager,
-    'http://aaaaaffffaaaaaa',
-    'iii'
-);
-var_dump($aaa);
-
 /**
 * @param int $currentPage 現在のページ
 * @param int $numAllPage 全ページ数
@@ -19,7 +7,7 @@ var_dump($aaa);
 * @return array 3次元配列
 * <code>
 * return = [
-*     'no' => [
+*     'no' => [ //通常のページ番号用の配列, ページ番号が5つだけど2ページまでしかない場合は残りはnullになる
 *         [
 *             'pageNo'     => (int),        // ページ番号
 *             'url'        => (string),     // リンク先のURL
@@ -29,7 +17,7 @@ var_dump($aaa);
 *         ....,
 *         [....],
 *     ],
-*     'fpnl' => [
+*     'fpnl' => [   //最初、前、次、最後 用の配列
 *         first  => [....],
 *         prev   => [....],
 *         next   => [....],
