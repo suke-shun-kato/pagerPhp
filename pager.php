@@ -1,38 +1,49 @@
 <?php
-$aaaAry = makePagerNoAry(10, 2, 5);
-var_dump($aaaAry);
+
 
 /**
 * ページャーのページを作成する関数
 *
-* @param int $numAllPage 全ページ数
 * @param int $currentPage 現在のページ
+* @param int $numAllPage 全ページ数
 * @param int $numPageNoInPager ページャーに表示されるページ番号の数
 * @return int[] ページャーに表示されるページ番号の配列、例えば
 */
-function makePagerNoAry($numAllPage, $currentPage, $numPageNoInPager) {
+function makePagerNoAry($currentPage, $numAllPage, $numPageNoInPager) {
     $pagerNumAry = [];
-    for ($i=1; $i<=$numAllPage; $i++) {
+
+    // --------------------------------------------------------------------
+    // メイン処理
+    // --------------------------------------------------------------------
+    for ($noPage=1; $noPage<=$numAllPage; $noPage++) {
         // ----------------------------------
-        // キューにページャーのページ番号をEnキュー、deキュー
+        // ページャーのページ番号をエンキュー、デキュー
         // ----------------------------------
-        ////ここはページ番号の配列を作成している
-        array_push($pagerNumAry, $i);
+        //// エンキュー ////
+        array_push($pagerNumAry, $noPage);
+        //// デキュー ////
         if(count($pagerNumAry) > $numPageNoInPager) {
             array_shift($pagerNumAry);
         }
 
         // ----------------------------------
-        // キュー動作の終了条件
+        // 離脱条件、最後
         // ----------------------------------
         if (
             //通常の条件
-            ($i >= $currentPage + floor($numPageNoInPager/2)) &&
+            ($noPage >= $currentPage + floor($numPageNoInPager/2)) &&
             //1や2のときのキューが埋まってない時の例外条件
             (count($pagerNumAry) >= $numPageNoInPager)
         ) {
             break;
-        }
+            }
+    }
+
+    // --------------------------------------------------------------------
+    // 不足分をnullで補う
+    // --------------------------------------------------------------------
+    while (count($pagerNumAry) < $numPageNoInPager) {
+        array_push($pagerNumAry, null);
     }
 
     return $pagerNumAry;
