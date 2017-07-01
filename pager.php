@@ -1,15 +1,109 @@
 <?php
-// $currentPage = 11;
-// $numAllPage = 12;
-// $numPageNoInPager = 7;
-// $aaa = makePager(
-//     $currentPage,
-//     $numAllPage,
-//     $numPageNoInPager,
-//     'http://aaaaaffffaaaaaa'
-// );
-// var_dump($aaa);
+$currentPage = 1;
+$numAllPage = 5;
+$numPageNoInPager = 7;
+$aaa = makePagerFull(
+    $currentPage,
+    $numAllPage,
+    $numPageNoInPager,
+    'http://aaaaaffffaaaaaa',
+    'iii'
+);
+var_dump($aaa);
 
+/**
+* @param int $currentPage 現在のページ
+* @param int $numAllPage 全ページ数
+* @param string $url ページ番号のリンク先のベースURL
+* @param string $keyName key名
+* @return array 3次元配列
+* <code>
+* return = [
+*     'no' => [
+*         [
+*             'pageNo'     => (int),        // ページ番号
+*             'url'        => (string),     // リンク先のURL
+*             'isCurrent'  => (boolean)',   // 現在のページかどうか
+*         ],
+*         [....],
+*         ....,
+*         [....],
+*     ],
+*     'fpnl' => [
+*         first  => [....],
+*         prev   => [....],
+*         next   => [....],
+*         last   => [....],
+*     ],
+* ];
+* </code>
+*/
+function makePagerFull($currentPage, $numAllPage, $numPageNoInPager, $url, $keyName='page') {
+    $no2dAry = makePager($currentPage, $numAllPage, $numPageNoInPager, $url, $keyName);
+    $fpnl2dAry = makePagerFirstPrevNextLast($currentPage, $numAllPage, $url, $keyName);
+
+    return ['no' => $no2dAry, 'fpnl' => $fpnl2dAry];
+}
+
+/**
+* ページャーに関する値などを作成する関数
+* @param int $currentPage 現在のページ
+* @param int $numAllPage 全ページ数
+* @param string $url ページ番号のリンク先のベースURL
+* @param string $keyName key名
+* @return array[] ページャーの2次元配列
+* <code>
+* return = [
+*     'first' => [
+*         'pageNo'        => (int),     // リンク先のURL
+*         'url'        => (string),     // リンク先のURL
+*         'isCurrent'  => (boolean)',   // 現在のページかどうか
+*     ],
+*     'prev' => [...],
+*     'next' => [...],
+*     'last' => [...],
+* ];
+* </code>
+*/
+function makePagerFirstPrevNextLast($currentPage, $numAllPage, $url, $keyName='page') {
+    // ----------------------------------
+    // 前処理
+    // ----------------------------------
+    //// 前ページの番号を作成 ////
+    if ($currentPage -1 > 0) {
+        $prevPage = $currentPage - 1;
+    } else {
+        $prevPage = null;
+    }
+    //// 次ページの番号を作成 ////
+    if ($currentPage + 1 <= $numAllPage) {
+        $nextPage = $currentPage + 1;
+    } else {
+        $nextPage = null;
+    }
+    ////  ////
+    $pageNoAry = [1, $prevPage, $nextPage, $numAllPage];
+
+    // ----------------------------------
+    // リンク先のURL作成
+    // ----------------------------------
+    $linkAry = makePagerLinkAry($pageNoAry, $url, $keyName);
+    $isCurrentAry = makeIsCurrentPageAry($pageNoAry, $currentPage);
+
+    // ----------------------------------
+    //
+    // ----------------------------------
+    $keyAry = ['first', 'prev', 'next', 'last'];
+    $i = 0;
+    foreach ($keyAry as $keyName) {
+        $rtn2dAry[$keyName]['pageNo'] = $pageNoAry[$i];
+        $rtn2dAry[$keyName]['url'] = $linkAry[$i];
+        $rtn2dAry[$keyName]['isCurrent'] = $isCurrentAry[$i];
+        $i++;
+    }
+
+    return $rtn2dAry;
+}
 /**
 * ページャーに関する値などを作成する関数
 * @param int $currentPage 現在のページ
@@ -63,7 +157,7 @@ function makeIsCurrentPageAry($pageNoAry, $currentPage) {
 
 /**
 * ページャーのリンク先URLを作成する関数、getでページ番号を指定できる
-* @param int[] $pageNoAry ページ番号の配列（ページャー表示用）
+* @param int[]|string[] $pageNoAry ページ番号の配列（ページャー表示用）
 * @param string $url ページ番号のリンク先のベースURL
 * @param string $keyName key名
 * @param string[] ページャーのリンクURL, ページ番号がnullのときはnull
