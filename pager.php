@@ -2,15 +2,48 @@
 $currentPage = 1;
 $numAllPage = 5;
 $numPageNoInPager = 7;
-// $aaa = makePager(
-//     $currentPage,
-//     $numAllPage,
-//     $numPageNoInPager,
-//     'http://aaaaaffffaaaaaa'
-// );
-$ssss = makePagerFirstPrevNextLast($currentPage, $numAllPage, 'http://aaaaaffffaaaaaa', 'ffff');
-var_dump($ssss);
+$aaa = makePagerFull(
+    $currentPage,
+    $numAllPage,
+    $numPageNoInPager,
+    'http://aaaaaffffaaaaaa',
+    'iii'
+);
+var_dump($aaa);
 
+/**
+* @param int $currentPage 現在のページ
+* @param int $numAllPage 全ページ数
+* @param string $url ページ番号のリンク先のベースURL
+* @param string $keyName key名
+* @return array 3次元配列
+* <code>
+* return = [
+*     'no' => [
+*         [
+*             'pageNo'     => (int),        // ページ番号
+*             'url'        => (string),     // リンク先のURL
+*             'isCurrent'  => (boolean)',   // 現在のページかどうか
+*         ],
+*         [....],
+*         ....,
+*         [....],
+*     ],
+*     'fpnl' => [
+*         first  => [....],
+*         prev   => [....],
+*         next   => [....],
+*         last   => [....],
+*     ],
+* ];
+* </code>
+*/
+function makePagerFull($currentPage, $numAllPage, $numPageNoInPager, $url, $keyName='page') {
+    $no2dAry = makePager($currentPage, $numAllPage, $numPageNoInPager, $url, $keyName);
+    $fpnl2dAry = makePagerFirstPrevNextLast($currentPage, $numAllPage, $url, $keyName);
+
+    return ['no' => $no2dAry, 'fpnl' => $fpnl2dAry];
+}
 
 /**
 * ページャーに関する値などを作成する関数
@@ -22,6 +55,7 @@ var_dump($ssss);
 * <code>
 * return = [
 *     'first' => [
+*         'pageNo'        => (int),     // リンク先のURL
 *         'url'        => (string),     // リンク先のURL
 *         'isCurrent'  => (boolean)',   // 現在のページかどうか
 *     ],
@@ -29,6 +63,7 @@ var_dump($ssss);
 *     'next' => [...],
 *     'last' => [...],
 * ];
+* </code>
 */
 function makePagerFirstPrevNextLast($currentPage, $numAllPage, $url, $keyName='page') {
     // ----------------------------------
@@ -58,14 +93,14 @@ function makePagerFirstPrevNextLast($currentPage, $numAllPage, $url, $keyName='p
     // ----------------------------------
     //
     // ----------------------------------
-    $rtn2dAry['first']['url'] = $linkAry[0];
-    $rtn2dAry['prev']['url'] = $linkAry[1];
-    $rtn2dAry['next']['url'] = $linkAry[2];
-    $rtn2dAry['last']['url'] = $linkAry[3];
-    $rtn2dAry['first']['isCurrent'] = $isCurrentAry[0];
-    $rtn2dAry['prev']['isCurrent'] = $isCurrentAry[1];
-    $rtn2dAry['next']['isCurrent'] = $isCurrentAry[2];
-    $rtn2dAry['last']['isCurrent'] = $isCurrentAry[3];
+    $keyAry = ['first', 'prev', 'next', 'last'];
+    $i = 0;
+    foreach ($keyAry as $keyName) {
+        $rtn2dAry[$keyName]['pageNo'] = $pageNoAry[$i];
+        $rtn2dAry[$keyName]['url'] = $linkAry[$i];
+        $rtn2dAry[$keyName]['isCurrent'] = $isCurrentAry[$i];
+        $i++;
+    }
 
     return $rtn2dAry;
 }
