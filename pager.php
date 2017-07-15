@@ -134,7 +134,7 @@ function makeIsCurrentPageAry($pageNoAry, $currentPage) {
     foreach ($pageNoAry as $key => $pageNo) {
         if (is_null($pageNo)) {
             $pagerTrueAry[$key] = null;
-        } elseif ($pageNo === $currentPage) {
+        } elseif ($pageNo == $currentPage) {
             $pagerTrueAry[$key] = true;
         } else {
             $pagerTrueAry[$key] = false;
